@@ -37,7 +37,7 @@ export default {
     this.initMap()
   },
   methods: {
-    initMap () {
+    async initMap () {
       const tempData = [
         {
           type: 'UrlTemplateImageryProvider',
@@ -75,29 +75,24 @@ export default {
       this.graphics = graphics;
       this.draw = draw;
 
-      var tilesets = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-        url: 'static/data/3DTiles/building/tileset.json'
-      }));
+      const tileset = await Cesium.Cesium3DTileset.fromUrl('static/data/3DTiles/building/tileset.json');
+      viewer.scene.primitives.add(tileset);
 
-      tilesets.readyPromise.then(function (tileset) {
-
-        tileset.style = new Cesium.Cesium3DTileStyle({
-          color: {
-            conditions: [
-              ["${height} >= 300", "rgba(0, 149, 251, 0.3)"],
-              ["${height} >= 200", "rgb(0, 149, 251, 0.3)"],
-              ["${height} >= 100", "rgb(0, 149, 251, 0.3)"],
-              ["${height} >= 50", "rgb(0, 149, 251, 0.3)"],
-              ["${height} >= 25", "rgb(0, 149, 251, 0.3)"],
-              ["${height} >= 10", "rgb(0, 149, 251, 0.3)"],
-              ["${height} >= 5", "rgb(0, 149, 251, 0.3)"],
-              ["true", "rgb(0, 149, 251, 0.3)"]
-            ]
-          }
-        });
-
-        viewer.flyTo(tileset)
-      })
+      tileset.style = new Cesium.Cesium3DTileStyle({
+        color: {
+          conditions: [
+            ["${height} >= 300", "rgba(0, 149, 251, 0.3)"],
+            ["${height} >= 200", "rgb(0, 149, 251, 0.3)"],
+            ["${height} >= 100", "rgb(0, 149, 251, 0.3)"],
+            ["${height} >= 50", "rgb(0, 149, 251, 0.3)"],
+            ["${height} >= 25", "rgb(0, 149, 251, 0.3)"],
+            ["${height} >= 10", "rgb(0, 149, 251, 0.3)"],
+            ["${height} >= 5", "rgb(0, 149, 251, 0.3)"],
+            ["true", "rgb(0, 149, 251, 0.3)"]
+          ]
+        }
+      });
+      viewer.flyTo(tileset)
     },
     caldDistain (clicktype) {
       this.activeId = clicktype;

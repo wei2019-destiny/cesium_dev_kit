@@ -1,20 +1,19 @@
 <template>
   <div>
-    <div id="cesiumContainer"
-         class="map3d-contaner"></div>
+    <div id="cesiumContainer" class="map3d-contaner"></div>
   </div>
 </template>
-<script >
+<script>
 import * as Cesium from 'cesium'
 import { Material } from '@/utils/cesiumPluginsExtends/singleImport/Material'
 import { raod, raod2, raod3, raod4, raod5, raod6, raod7 } from './extraData'
 
 export default {
-  mounted () {
+  mounted() {
     this.initMap()
   },
   methods: {
-    initMap () {
+    initMap() {
       const materialObj = new Material({
         cesiumGlobal: Cesium,
         containerId: 'cesiumContainer',
@@ -33,19 +32,16 @@ export default {
       this.material.setBloomLightScene()
       this.load3dTiles(materialObj.viewer);
     },
-    load3dTiles (viewer) {
+    async load3dTiles(viewer) {
       var _self = this;
       viewer.scene.sun.show = false;
       viewer.scene.moon.show = false;
       viewer.scene.skyAtmosphere.show = false;
 
 
-      var tilesets = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-        url: 'static/data/3DTiles/building/tileset.json'
-      }));
-
-      tilesets.readyPromise.then(function (tileset) {
-
+      try {
+        const tileset = await Cesium.Cesium3DTileset.fromUrl('static/data/3DTiles/building/tileset.json');
+        viewer.scene.primitives.add(tileset);
         tileset.style = new Cesium.Cesium3DTileStyle({
           color: {
             conditions: [
@@ -62,9 +58,12 @@ export default {
         });
         viewer.flyTo(tileset)
         _self.addEntityToScene(viewer);
-      });
+      } catch (err) {
+        console.log(err);
+        ElMessage.error('加载3dtiles失败');
+      }
     },
-    addEntityToScene (viewer) {
+    addEntityToScene(viewer) {
 
       viewer.entities.add({
         polyline: {
@@ -141,7 +140,7 @@ export default {
       });
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.c_viewer = null;
     this.material = null;
   }
@@ -152,11 +151,13 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+
   .ctrl-group {
     position: absolute;
     top: 10px;
     right: 20px;
     z-index: 999;
+
     .reset-home-btn {
       color: #36a3f7;
       cursor: pointer;

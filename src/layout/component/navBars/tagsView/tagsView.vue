@@ -1,37 +1,28 @@
 <template>
-  <div class="layout-navbars-tagsview"
-       :class="{
-      'layout-navbars-tagsview-shadow': getThemeConfig.layout === 'classic'
-    }">
-    <el-scrollbar ref="scrollbarRef"
-                  @wheel.prevent="onHandleScroll">
-      <ul class="layout-navbars-tagsview-ul tags-style-one"
-          ref="tagsUlRef">
-        <li v-for="(v, k) in tagsViewList"
-            :key="k"
-            class="layout-navbars-tagsview-ul-li"
-            :data-name="v.name"
-            :class="{ 'is-active': isActive(v.path) }"
-            @click="onTagsClick(v, k)"
-            :ref="
-            (el) => {
-              if (el) tagsRefs[k] = el
-            }
-          ">
-          <i class="iconfont icon-webicon318 layout-navbars-tagsview-ul-li-iconfont font14"
-             v-if="isActive(v.path)"></i>
-          <i class="layout-navbars-tagsview-ul-li-iconfont"
-             :class="v.meta.icon"
-             v-if="!isActive(v.path) && getThemeConfig.isTagsviewIcon"></i>
+  <div class="layout-navbars-tagsview" :class="{
+    'layout-navbars-tagsview-shadow': getThemeConfig.layout === 'classic'
+  }">
+    <el-scrollbar ref="scrollbarRef" @wheel.prevent="onHandleScroll">
+      <ul class="layout-navbars-tagsview-ul tags-style-one" ref="tagsUlRef">
+        <li v-for="(v, k) in tagsViewList" :key="k" class="layout-navbars-tagsview-ul-li" :data-name="v.name"
+          :class="{ 'is-active': isActive(v.path) }" @click="onTagsClick(v, k)" :ref="(el) => {
+            if (el) tagsRefs[k] = el
+          }
+            ">
+          <i class="iconfont icon-webicon318 layout-navbars-tagsview-ul-li-iconfont font14" v-if="isActive(v.path)"></i>
+          <i class="layout-navbars-tagsview-ul-li-iconfont" :class="v.meta.icon"
+            v-if="!isActive(v.path) && getThemeConfig.isTagsviewIcon"></i>
           <span>{{ v.meta.title }}</span>
-          <template v-if="isActive(v.path) && tagsViewList.length>1 ">
-            <i class="el-icon-close layout-navbars-tagsview-ul-li-icon layout-icon-active"
-               v-if="!v.meta.isAffix"
-               @click.stop="closeCurrentTagsView(v.path)"></i>
+          <template v-if="isActive(v.path) && tagsViewList.length > 1">
+            <i class="el-icon-close layout-navbars-tagsview-ul-li-icon layout-icon-active" v-if="!v.meta.isAffix"
+              @click.stop="closeCurrentTagsView(v.path)"></i>
           </template>
-          <i class="el-icon-close layout-navbars-tagsview-ul-li-icon layout-icon-three"
-             v-if="!v.meta.isAffix"
-             @click.stop="closeCurrentTagsView(v.path)"></i>
+          <!-- <i class="el-icon-close layout-navbars-tagsview-ul-li-icon layout-icon-three" v-if="!v.meta.isAffix"
+            @click.stop="closeCurrentTagsView(v.path)"></i> -->
+          <el-icon color="#409efc" class=" layout-navbars-tagsview-ul-li-icon layout-icon-three" v-if="!v.meta.isAffix"
+            @click.stop="closeCurrentTagsView(v.path)">
+            <Close />
+          </el-icon>
         </li>
       </ul>
     </el-scrollbar>
@@ -64,7 +55,7 @@ import { useStore } from 'store/index'
 import { setSession, removeSession } from '@/utils/localCache'
 
 import { ElScrollbar } from 'element-plus'
-
+import { Close } from '@element-plus/icons-vue'
 interface State {
   routePath: string
   tagsRefsIndex: number
@@ -74,7 +65,7 @@ interface State {
 }
 export default {
   name: 'layoutTagsView',
-  components: {},
+  components: { Close },
   setup() {
     const { proxy } = getCurrentInstance() as any
     const tagsRefs = ref<ElRef[]>([])
@@ -254,9 +245,9 @@ export default {
       }
     )
     // 页面加载前
-    onBeforeMount(() => {})
+    onBeforeMount(() => { })
     // 页面卸载时
-    onUnmounted(() => {})
+    onUnmounted(() => { })
     // 页面更新时
     onBeforeUpdate(() => {
       tagsRefs.value = []
@@ -294,6 +285,7 @@ export default {
       }
     })
     return {
+      Close,
       isActive,
       getTagsViewRoutes,
       onTagsClick,
@@ -314,9 +306,11 @@ export default {
   flex: 1;
   background-color: #ffffff;
   border-bottom: 1px solid #f1f2f3;
+
   :deep(.el-scrollbar__wrap) {
     overflow-x: auto !important;
   }
+
   &-ul {
     list-style: none;
     margin: 0;
@@ -328,6 +322,7 @@ export default {
     font-size: 12px;
     white-space: nowrap;
     padding: 0 15px;
+
     &-li {
       height: 26px;
       line-height: 26px;
@@ -341,16 +336,19 @@ export default {
       z-index: 0;
       cursor: pointer;
       justify-content: space-between;
+
       &:hover {
         background-color: var(--color-primary-light-9);
         color: var(--color-primary);
         border-color: var(--color-primary-light-6);
       }
+
       &-iconfont {
         position: relative;
         left: -5px;
         font-size: 12px;
       }
+
       &-icon {
         border-radius: 100%;
         position: relative;
@@ -359,40 +357,49 @@ export default {
         text-align: center;
         line-height: 14px;
         right: -5px;
+
         &:hover {
           color: #fff;
           background-color: var(--color-primary-light-3);
         }
       }
+
       .layout-icon-active {
         display: block;
       }
+
       .layout-icon-three {
         display: none;
       }
     }
+
     .is-active {
       color: #ffffff;
       background: var(--color-primary);
       border-color: var(--color-primary);
     }
   }
+
   // 风格2
   .tags-style-two {
     .layout-navbars-tagsview-ul-li {
       height: 34px !important;
       line-height: 34px !important;
       border: none !important;
+
       .layout-navbars-tagsview-ul-li-iconfont {
         display: none;
       }
+
       .layout-icon-active {
         display: none;
       }
+
       .layout-icon-three {
         display: block;
       }
     }
+
     .is-active {
       background: none !important;
       color: var(--color-primary) !important;
@@ -401,6 +408,7 @@ export default {
       border-radius: 0 !important;
     }
   }
+
   // 风格3
   .tags-style-three {
     .layout-navbars-tagsview-ul-li {
@@ -412,16 +420,20 @@ export default {
       border-left: none !important;
       border-radius: 0 !important;
       margin-right: 0 !important;
+
       &:first-of-type {
         border-left: 1px solid #f6f6f6 !important;
       }
+
       .layout-icon-active {
         display: none;
       }
+
       .layout-icon-three {
         display: block;
       }
     }
+
     .is-active {
       background: white !important;
       color: var(--color-primary) !important;
@@ -429,6 +441,7 @@ export default {
       border-top-color: var(--color-primary) !important;
     }
   }
+
   // 风格4
   .tags-style-four {
     .layout-navbars-tagsview-ul-li {
@@ -436,22 +449,27 @@ export default {
       border: none !important;
       position: relative;
       border-radius: 3px !important;
+
       .layout-icon-active {
         display: none;
       }
+
       .layout-icon-three {
         display: block;
       }
+
       &:hover {
         background: none !important;
       }
     }
+
     .is-active {
       background: none !important;
       color: var(--color-primary) !important;
     }
   }
 }
+
 .layout-navbars-tagsview-shadow {
   box-shadow: rgb(0 21 41 / 4%) 0px 1px 4px;
 }

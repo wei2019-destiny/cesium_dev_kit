@@ -1,20 +1,19 @@
 <template>
   <div>
-    <div id="cesiumContainer"
-         class="map3d-contaner"></div>
+    <div id="cesiumContainer" class="map3d-contaner"></div>
   </div>
 </template>
-<script >
+<script>
 import * as Cesium from 'cesium'
 import { initCesium } from '@/utils/cesiumPluginsExtends/index'
 
 
 export default {
-  mounted () {
+  mounted() {
     this.initMap()
   },
   methods: {
-    initMap () {
+    async initMap() {
       const {
         viewer,
         material,
@@ -42,11 +41,10 @@ export default {
       // }));
       this.material.setDefSceneConfig()
       this.material.setBloomLightScene()
-      let tileset = this.c_viewer.scene.primitives.add(
-        new Cesium.Cesium3DTileset({
-          url: 'static/data/3DTiles/building/tileset.json',
-        }),
-      )
+      let tileset = await Cesium.Cesium3DTileset.fromUrl(
+        "static/data/3DTiles/building/tileset.json"
+      );
+      this.c_viewer.scene.primitives.add(tileset);
       tileset.style = new Cesium.Cesium3DTileStyle({
         color: {
           conditions: [
@@ -66,7 +64,7 @@ export default {
 
       this.createModel();
     },
-    flyto () {
+    flyto() {
       this.material.flyTo({
         position: { x: -1337132.0092982147, y: 5330611.474631115, z: 3228680.029449292 },
         orientation: {
@@ -76,7 +74,7 @@ export default {
         }
       })
     },
-    createModel () {
+    createModel() {
 
       this.graphics.createGifBillboardGraphics({
         position: Cesium.Cartesian3.fromDegrees(104.081701757991, 30.627042558105988, 200),
@@ -84,7 +82,7 @@ export default {
       })
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.c_viewer = null;
     this.material = null;
     this.graphics = null;
@@ -96,11 +94,13 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+
   .ctrl-group {
     position: absolute;
     top: 10px;
     right: 20px;
     z-index: 999;
+
     .reset-home-btn {
       color: #36a3f7;
       cursor: pointer;

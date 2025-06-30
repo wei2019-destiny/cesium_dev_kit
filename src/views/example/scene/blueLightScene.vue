@@ -18,7 +18,7 @@ export default {
     this.initMap()
   },
   methods: {
-    initMap () {
+    async initMap () {
       const tempData = [
         {
           type: 'UrlTemplateImageryProvider',
@@ -45,11 +45,11 @@ export default {
       this.c_viewer = viewer;
 
       this.material = material;
-      let tileset = this.c_viewer.scene.primitives.add(
-        new Cesium.Cesium3DTileset({
-          url: 'static/data/3DTiles/building/tileset.json',
-        }),
-      )
+      const tileset = await Cesium.Cesium3DTileset.fromUrl(
+        'static/data/3DTiles/building/tileset.json'
+      );
+      this.c_viewer.scene.primitives.add(tileset);
+
       tileset.style = new Cesium.Cesium3DTileStyle({
         color: {
           conditions: [

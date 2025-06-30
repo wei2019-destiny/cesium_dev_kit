@@ -13,7 +13,7 @@ export default {
     this.initMap()
   },
   methods: {
-    initMap () {
+    async initMap () {
       const { viewer, material, graphics } = new initCesium(
         {
           cesiumGlobal: Cesium,
@@ -32,11 +32,11 @@ export default {
       this.graphics = graphics
       this.material.setDefSceneConfig()
       this.material.setBloomLightScene()
-      let tileset = this.c_viewer.scene.primitives.add(
-        new Cesium.Cesium3DTileset({
-          url: 'static/data/3DTiles/building/tileset.json'
-        })
-      )
+      const tileset = await Cesium.Cesium3DTileset.fromUrl(
+        'static/data/3DTiles/building/tileset.json'
+      );
+      this.c_viewer.scene.primitives.add(tileset);
+
       tileset.style = new Cesium.Cesium3DTileStyle({
         color: {
           conditions: [

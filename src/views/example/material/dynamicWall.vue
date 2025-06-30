@@ -1,7 +1,6 @@
 <template>
   <div>
-    <div id="cesiumContainer"
-         class="map3d-contaner"></div>
+    <div id="cesiumContainer" class="map3d-contaner"></div>
   </div>
 </template>
 <script>
@@ -9,11 +8,11 @@ import * as Cesium from 'cesium'
 import { initCesium } from '@/utils/cesiumPluginsExtends/index'
 
 export default {
-  mounted () {
+  mounted() {
     this.initMap()
   },
   methods: {
-    initMap () {
+    async initMap() {
       const { viewer, material, graphics, math3d } = new initCesium(
         {
           cesiumGlobal: Cesium,
@@ -25,7 +24,6 @@ export default {
           extraConfig: {},
           MapImageryList: []
         })
-
       this.c_viewer = viewer
 
       this.material = material
@@ -34,11 +32,11 @@ export default {
 
       this.material.setDefSceneConfig()
       this.material.setBloomLightScene()
-      let tileset = this.c_viewer.scene.primitives.add(
-        new Cesium.Cesium3DTileset({
-          url: 'static/data/3DTiles/building/tileset.json'
-        })
-      )
+      const tileset = await Cesium.Cesium3DTileset.fromUrl(
+        'static/data/3DTiles/building/tileset.json'
+      );
+      this.c_viewer.scene.primitives.add(tileset);
+
       tileset.style = new Cesium.Cesium3DTileStyle({
         color: {
           conditions: [
@@ -59,7 +57,7 @@ export default {
       this.createPolygonOne()
       this.createPolygonTwo()
     },
-    createCustMaterialWall (
+    createCustMaterialWall(
       imgUrl,
       colorVal,
       durationNum,
@@ -75,7 +73,7 @@ export default {
         duration: durationNum
       })
     },
-    createPolygonOne () {
+    createPolygonOne() {
       let three = this.c_viewer.entities.add({
         name: 'aaaaa',
         wall: {
@@ -106,7 +104,7 @@ export default {
         }
       })
     },
-    createPolygonTwo () {
+    createPolygonTwo() {
 
       this.material.addMaterialWallGraphics({
         positions: Cesium.Cartesian3.fromDegreesArrayHeights([
@@ -136,7 +134,7 @@ export default {
       })
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.c_viewer = null
     this.material = null
     this.graphics = null
@@ -148,11 +146,13 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+
   .ctrl-group {
     position: absolute;
     top: 10px;
     right: 20px;
     z-index: 999;
+
     .reset-home-btn {
       color: #36a3f7;
       cursor: pointer;

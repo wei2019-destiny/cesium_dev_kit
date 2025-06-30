@@ -40,14 +40,12 @@ export default {
       this.graphics.setBloomLightScene()
       this.load3dTiles(viewer);
     },
-    load3dTiles(viewer) {
+    async load3dTiles(viewer) {
       var _self = this;
 
-      var tilesets = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-        url: 'static/data/3DTiles/building/tileset.json'
-      }));
-
-      tilesets.readyPromise.then(function (tileset) {
+      try {
+        const tileset = await Cesium.Cesium3DTileset.fromUrl('static/data/3DTiles/building/tileset.json');
+        viewer.scene.primitives.add(tileset);
 
         tileset.style = new Cesium.Cesium3DTileStyle({
           color: {
@@ -65,7 +63,9 @@ export default {
         });
         viewer.flyTo(tileset)
         _self.addEntityToScene(viewer);
-      });
+      } catch (err) {
+        console.error(err);
+      }
     },
     addEntityToScene(viewer) {
       this.graphics.createCustomDefBillboardGraphics({

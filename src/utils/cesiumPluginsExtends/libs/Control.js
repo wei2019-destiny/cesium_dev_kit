@@ -203,14 +203,10 @@ Control.prototype = {
           });
         },
         "3dtilset": () => {
-          commonUpload((fileData) => {
-            viewer.flyTo(
-              viewer.scene.primitives.add(
-                new Cesium.Cesium3DTileset({
-                  url: fileData,
-                })
-              )
-            );
+           commonUpload(async(fileData) => {
+            const tileset = await Cesium.Cesium3DTileset.fromUrl(fileData);
+            viewer.scene.primitives.add(tileset);
+            viewer.flyTo(tileset);
           });
         },
       };
@@ -431,7 +427,9 @@ Control.prototype = {
    *    cesiumGlobal: Cesium,
         containerId: 'cesiumContainer'
       })
-     let tileset =  viewer.scene.primitives.add(new Cesium.Cesium3DTileset({url: 'static/data/3DTiles/building/tileset.json'}));
+     // in an async function
+     const tileset = await Cesium.Cesium3DTileset.fromUrl('static/data/3DTiles/building/tileset.json');
+     viewer.scene.primitives.add(tileset);
       control.showPrimitiveMatrixPanel({
          elementId: 'cust-gui-box',
          primitives: tileset, 

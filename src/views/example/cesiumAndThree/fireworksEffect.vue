@@ -19,7 +19,7 @@ export default {
     this.initMap()
   },
   methods: {
-    initMap () {
+    async initMap () {
       const { viewer, threeJs, base, graphics, material } = new initCesium({
         cesiumGlobal: Cesium,
         threeGlobal: THREE,
@@ -41,17 +41,16 @@ export default {
       this.base = base;
       this.graphics = graphics;
       this.material = material
-      this.loadTiles()
+      await this.loadTiles()
       // this.material.setDarkEffect();
       this.initThree(this.threeJs);
       // this.getClickPosition()
     },
-    loadTiles () {
-      let tileset = this.c_viewer.scene.primitives.add(
-        new Cesium.Cesium3DTileset({
-          url: 'static/data/3DTiles/building/tileset.json',
-        }),
-      )
+    async loadTiles () {
+      let tileset = await Cesium.Cesium3DTileset.fromUrl(
+        "static/data/3DTiles/building/tileset.json"
+      );
+      this.c_viewer.scene.primitives.add(tileset);
       tileset.style = new Cesium.Cesium3DTileStyle({
         color: {
           conditions: [
